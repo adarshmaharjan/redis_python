@@ -1,0 +1,20 @@
+services:
+  redis:
+    container_name: redis_python_container
+    image: redis:alpine
+    ports:
+      - "6380:6379"
+    env_file:
+      - .env
+    volumes:
+      - redis_data:/data
+    environment:
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: >
+      sh -c "echo 'user default on nopass ~* +@all' > /data/users.acl &&
+             echo \"user $$REDIS_USER on >$$REDIS_PASSWORD ~* +@all\" >> /data/users.acl &&
+             redis-server --aclfile /data/users.acl"
+
+volumes:
+  redis_data:
